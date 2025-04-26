@@ -1,6 +1,9 @@
 package com.chamados.API.controllers.dtos;
 
+import com.chamados.API.entities.Department;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UserDTO(
@@ -12,6 +15,8 @@ public record UserDTO(
         String username,
         @NotBlank(message = "campo obrigatório")
         @Size(min = 4, max = 10)
-        String password
+        String password,
+        @NotNull @Valid
+        Department department
 ) {
 }
