@@ -35,6 +35,9 @@ public class User {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 
+    @Column(name = "is_active", columnDefinition = "boolean default true", nullable = false)
+    private Boolean isActive = true;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
     private UserRole role;

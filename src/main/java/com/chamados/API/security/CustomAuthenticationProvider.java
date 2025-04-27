@@ -24,7 +24,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        User userFound = userService.GetByUsername(username);
+        User userFound = userService.getByUsername(username);
 
         if (userFound == null) {
             throw getErrorUserNotFound();
