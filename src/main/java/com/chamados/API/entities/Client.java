@@ -18,7 +18,7 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "clientId")
+    @Column(name = "client_id")
     private String clientId;
 
     @Column(name = "client_secret")
@@ -38,7 +38,7 @@ public class Client {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 
-    @Column(name = "is_active", columnDefinition = "boolean default true", nullable = false)
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private Boolean isActive = true;
 
 }

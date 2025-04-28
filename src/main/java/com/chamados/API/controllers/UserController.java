@@ -24,4 +24,10 @@ public class UserController implements GenericController {
         User user = userService.insertUser(userMapper.toEntity(userDTO));
         return ResponseEntity.created(generateHeaderLocation(user.getId())).build();
     }
+
+    @GetMapping
+    public ResponseEntity<UserDTO> getByUsername(@RequestParam String username){
+        var user = userService.getByUsername(username);
+        return ResponseEntity.ok(userMapper.toDTO(user));
+    }
 }

@@ -1,17 +1,13 @@
 package com.chamados.API.config;
 
-import com.chamados.API.entities.User;
 import com.chamados.API.security.CustomAuthentication;
-import com.chamados.API.services.UserService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,14 +41,6 @@ import java.util.UUID;
 @EnableWebSecurity
 public class AuthorizationServerConfiguration {
 
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-
-    public AuthorizationServerConfiguration(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -74,7 +62,9 @@ public class AuthorizationServerConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(Customizer.withDefaults())
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                )
                 .with(authorizationServerConfigurer, Customizer.withDefaults());
 
         return http.build();
@@ -90,7 +80,7 @@ public class AuthorizationServerConfiguration {
         return TokenSettings.builder()
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                 .accessTokenTimeToLive(Duration.ofMinutes(60))
-                .refreshTokenTimeToLive(Duration.ofHours(24))
+                .refreshTokenTimeToLive(Duration.ofMinutes(90))
                 .build();
     }
 
@@ -116,7 +106,8 @@ public class AuthorizationServerConfiguration {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-        return new RSAKey.Builder(publicKey)
+        return new RSAKey
+                .Builder(publicKey)
                 .privateKey(privateKey)
                 .keyID(UUID.randomUUID().toString())
                 .build();
@@ -127,7 +118,7 @@ public class AuthorizationServerConfiguration {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwtSource);
     }
 
-    @Bean
+
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
                 .tokenEndpoint("/oauth/token")
@@ -153,15 +144,10 @@ public class AuthorizationServerConfiguration {
                     List<String> authoritiesList =
                             authorities.stream().map(GrantedAuthority::getAuthority).toList();
 
-                    context.getClaims()
-                            .claim("id", authentication.getUser().getId())
-                            .claim("name", authentication.getUser().getName())
+                    context
+                            .getClaims()
                             .claim("authorities", authoritiesList) //CustomAuthentication já busca as roles e define como authorities
-                            .claim("username", authentication.getUser().getUsername())
-                            .claim("isActive", authentication.getUser().getIsActive())
-                            .claim("created_date", authentication.getUser().getCreatedDate())
-                            .claim("last_modified_date", authentication.getUser().getLastModifiedDate())
-                            .claim("department", authentication.getUser().getDepartment().getName());
+                            .claim("username", authentication.getUser().getUsername());
                 }
             }
         };

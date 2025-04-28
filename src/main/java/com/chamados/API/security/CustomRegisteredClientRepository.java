@@ -1,6 +1,5 @@
 package com.chamados.API.security;
 
-import com.chamados.API.repositories.ClientRepository;
 import com.chamados.API.services.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
