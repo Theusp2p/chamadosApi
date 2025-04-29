@@ -26,3 +26,18 @@ create table client(
    is_active boolean not null default true
 )
 create unique index idx_client_clientId on client(clientId);
+
+
+create table support_ticket(
+   id serial primary key,
+   object varchar(100) not null,
+   description varchar(500) not null,
+   comment varchar(500),
+   priority varchar(15) not null,
+   status varchar(15) not null,
+   create_at timestamp not null default current_timestamp,
+   updated_at timestamp,
+   attributed_to int references tb_user(id),
+   last_modified_by int references tb_user(id),
+   created_by int not null references tb_user(id)
+)

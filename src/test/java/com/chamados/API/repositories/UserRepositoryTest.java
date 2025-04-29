@@ -32,6 +32,7 @@ class UserRepositoryTest {
         user.setName("admin");
         user.setUsername("admin");
         user.setPassword(passwordEncoder.encode("admin"));
+        user.setIsActive(true);
         user.setCreatedDate(LocalDateTime.now());
         user.setRole(UserRole.ADMIN);
 
