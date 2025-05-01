@@ -17,7 +17,7 @@ create table tb_user(
 
 create table client(
    id serial primary key,
-   clientId varchar(100) not null,
+   client_id varchar(100) not null,
    client_secret varchar(128) not null,
    redirect_uri varchar(255) not null,
    scope varchar(255) not null,
