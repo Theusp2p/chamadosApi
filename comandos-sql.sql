@@ -35,7 +35,7 @@ create table support_ticket(
    comment varchar(500),
    priority varchar(15) not null,
    status varchar(15) not null,
-   create_at timestamp not null default current_timestamp,
+   created_at timestamp not null default current_timestamp,
    updated_at timestamp,
    attributed_to int references tb_user(id),
    last_modified_by int references tb_user(id),

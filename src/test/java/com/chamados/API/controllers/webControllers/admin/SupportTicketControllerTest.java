@@ -28,7 +28,7 @@ class SupportTicketControllerTest {
         SupportTicket supportTicket = new SupportTicket();
         supportTicket.setObject("Teste");
         supportTicket.setDescription("testando");
-        supportTicket.setPriority(PriorityRole.BAIXA);
+        supportTicket.setPriority(PriorityRole.CRITICA);
 
         User createdBy = userService.getByUsername("admin");
 
