@@ -24,11 +24,4 @@ public class ClientController {
         clientService.insert(client);
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Client>> getAllClients() {
-        List<Client> list = clientService.findAll();
-        return ResponseEntity.ok(list);
-    }
-
 }

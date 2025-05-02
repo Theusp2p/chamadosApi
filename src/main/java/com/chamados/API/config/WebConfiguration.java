@@ -10,7 +10,10 @@ public class WebConfiguration implements WebMvcConfigurer  {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE); //A mais alta precedência, só acessa outras rotas depois de passar por essa
+
     }
+
+
 
 
 }

@@ -27,12 +27,23 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(configurer -> {
-                    configurer.loginPage("/login").permitAll();
+                    configurer
+                            .loginPage("/login").permitAll()
+                            .successHandler((request, response, authentication) -> {
+                                if (authentication.getAuthorities().stream()
+                                        .anyMatch(grantedAuthority ->
+                                                grantedAuthority.getAuthority().equals("ADMIN"))) {
+                                    response.sendRedirect("/admin/dashboard");
+                                }else {
+                                    response.sendRedirect("/user/dashboard");
+                                }
+                            })
+                            .failureUrl("/login?error");
                 })
 
                 .authorizeHttpRequests(authorize ->{
                     authorize.requestMatchers("/login/**").permitAll();
-                    authorize.requestMatchers("/users/**").permitAll();
+                    authorize.requestMatchers("/users/**").hasAuthority("ADMIN");
                     authorize.requestMatchers("/clients/**").hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 })
