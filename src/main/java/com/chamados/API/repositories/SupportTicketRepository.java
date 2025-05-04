@@ -21,9 +21,30 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, Lo
             Pageable pageable
     );
 
-    @Query("SELECT s FROM SupportTicket s ORDER BY s.createdAt DESC LIMIT :limit")
+    @Query("SELECT t FROM SupportTicket t ORDER BY t.createdAt DESC LIMIT :limit")
     List<SupportTicket> findTopNByOrderByCreatedAtDesc(@Param("limit") int limit);
 
     @Query("SELECT t FROM SupportTicket t WHERE t.priority = com.chamados.API.entities.enums.PriorityRole.CRITICA ORDER BY t.createdAt DESC")
     List<SupportTicket> findUrgentTickets();
+
+    @Query("SELECT t FROM SupportTicket t WHERE t.status = 'EM_ANDAMENTO' ORDER BY t.createdAt DESC")
+    List<SupportTicket> findInProgressTickets();
+
+    @Query("SELECT t FROM SupportTicket t WHERE t.status = 'ABERTO' ORDER BY t.createdAt DESC")
+    List<SupportTicket> findSupportTicketByStatusOpen();
+
+    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'ABERTO'")
+    Long countSupportTicketByStatusOpen();
+
+    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'FECHADO'")
+    Long countSupportTicketByStatusClose();
+
+    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'EM_ANDAMENTO'")
+    Long countSupportTicketByStatusInProgress();
+
+    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.priority = 'CRITICA'")
+    Long countSupportTicketByPriorityUrgent();
+
+
+
 }

@@ -5,6 +5,7 @@ import com.chamados.API.entities.User;
 import com.chamados.API.entities.enums.PriorityRole;
 import com.chamados.API.entities.enums.SupportTicketStatusRole;
 import com.chamados.API.repositories.SupportTicketRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import java.util.List;
 public class SupportTicketService {
 
     private final SupportTicketRepository repository;
+    private final UserService userService;
 
         // Método para chamados urgentes
         public List<SupportTicket> findByPriorityAndStatusNot(
@@ -45,6 +47,8 @@ public class SupportTicketService {
         ticket.setCreatedBy(createdBy);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setStatus(SupportTicketStatusRole.ABERTO);
+        ticket.setPriority(PriorityRole.MEDIA);
+        ticket.setAttributedTo("Tecnologia da Informação");
         return repository.save(ticket);
     }
 
@@ -56,7 +60,7 @@ public class SupportTicketService {
             ticket.setComment(ticketDetails.getComment());
             ticket.setPriority(ticketDetails.getPriority());
             ticket.setStatus(ticketDetails.getStatus());
-            ticket.setLastModifiedBy(modifiedBy);
+            ticket.setLastModifiedBy("TI");
             ticket.setUpdatedAt(LocalDateTime.now());
             return repository.save(ticket);
         }
@@ -71,19 +75,45 @@ public class SupportTicketService {
         return repository.findUrgentTickets();
     }
 
+    public Object findInProgressTickets() {
+            return repository.findInProgressTickets();
+    }
+
     public Object countOpenTickets() {
-        return null;
+        return repository.countSupportTicketByStatusOpen();
     }
 
     public Object countResolvedTickets() {
-        return null;
+        return repository.countSupportTicketByStatusClose();
     }
 
     public Object countInProgressTickets() {
-        return null;
+        return repository.countSupportTicketByStatusInProgress();
     }
 
     public Object countUrgentTickets() {
+        return repository.countSupportTicketByPriorityUrgent();
+    }
+
+    public Object filterByStatus(String status) {
         return null;
+    }
+
+    public List<SupportTicket> filterByStatusOpen() {
+        return repository.findSupportTicketByStatusOpen();
+    }
+
+
+    @Transactional
+    public void updateTicket(Long id, SupportTicket updatedTicket) {
+            var ticket = findById(id);
+            if (ticket != null) {
+                ticket.setPriority(updatedTicket.getPriority());
+                ticket.setStatus(updatedTicket.getStatus());
+                ticket.setAttributedTo(updatedTicket.getAttributedTo());
+                ticket.setComment(updatedTicket.getComment());
+
+                repository.save(ticket);
+            }
     }
 }

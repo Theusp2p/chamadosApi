@@ -29,14 +29,14 @@ class UserRepositoryTest {
     @Test
     void isertUser(){
         User user = new User();
-        user.setName("admin");
-        user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("admin"));
+        user.setName("Tecnologia da Informação");
+        user.setUsername("TI");
+        user.setPassword(passwordEncoder.encode("ti123"));
         user.setIsActive(true);
         user.setCreatedDate(LocalDateTime.now());
         user.setRole(UserRole.ADMIN);
 
-        Department department = departmentRepository.findById(2).get();
+        Department department = departmentRepository.findById(1).get();
 
         user.setDepartment(department);
 

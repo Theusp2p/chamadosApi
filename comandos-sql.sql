@@ -37,7 +37,8 @@ create table support_ticket(
    status varchar(15) not null,
    created_at timestamp not null default current_timestamp,
    updated_at timestamp,
-   attributed_to int references tb_user(id),
-   last_modified_by int references tb_user(id),
+   attributed_to varchar(30),
+   last_modified_by varchar(15),
+   id_department int not null references department(id),
    created_by int not null references tb_user(id)
 )

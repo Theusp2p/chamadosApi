@@ -26,12 +26,9 @@ public class AdminViewController {
             model.addAttribute("user", customAuth.getUser());
         }
 
-        // Adiciona os dados para o dashboard
+        model.addAttribute("activePage", "dashboard");
         model.addAttribute("openTicketsCount", ticketService.countOpenTickets());
-        model.addAttribute("resolvedTicketsCount", ticketService.countResolvedTickets());
-        model.addAttribute("inProgressTicketsCount", ticketService.countInProgressTickets());
-        model.addAttribute("urgentTicketsCount", ticketService.countUrgentTickets());
-        model.addAttribute("urgentTickets", ticketService.findUrgentTickets());
+        model.addAttribute("opensTickets", ticketService.filterByStatusOpen());
 
         return "admin/dashboard"; // Agora aponta para o template único
     }

@@ -16,20 +16,16 @@ import java.util.Optional;
 @SpringBootApplication
 public class ChamadosApiApplication {
 
-		@Bean
-		public AuditorAware<User> auditorAware(UserService userService) {
-			return () -> {
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-				if (auth == null || !auth.isAuthenticated()) {
-					return Optional.empty();
-				}
-
-				// Reaproveita a mesma lógica do AuthenticationProvider!
-				String username = auth.getName();
-				return Optional.ofNullable(userService.getByUsername(username));
-			};
-		}
+	@Bean
+	public AuditorAware<String> auditorAware() {
+		return () -> {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth == null || !auth.isAuthenticated()) {
+				return Optional.empty();
+			}
+			return Optional.of(auth.getName()); // Retorna apenas o username
+		};
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChamadosApiApplication.class, args);

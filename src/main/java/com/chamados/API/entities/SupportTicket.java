@@ -39,6 +39,10 @@ public class SupportTicket {
     @Column(nullable = false)
     private SupportTicketStatusRole status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_department")
+    private Department department;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -47,14 +51,13 @@ public class SupportTicket {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attributed_to")
-    private User attributedTo;
+
+    @Column(name = "attributed_to")
+    private String attributedTo;
 
     @LastModifiedBy
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "last_modified_by")
-    private User lastModifiedBy;
+    @Column(name = "last_modified_by")
+    private String lastModifiedBy;
 
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -1,18 +1,14 @@
 package com.chamados.API.controllers.webControllers.admin;
 
+import com.chamados.API.entities.Department;
 import com.chamados.API.entities.SupportTicket;
 import com.chamados.API.entities.User;
-import com.chamados.API.entities.enums.PriorityRole;
-import com.chamados.API.entities.enums.SupportTicketStatusRole;
+import com.chamados.API.services.DepartmentService;
 import com.chamados.API.services.SupportTicketService;
 import com.chamados.API.services.UserService;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.data.jpa.domain.AbstractAuditable_.createdBy;
 
 @SpringBootTest
 class SupportTicketControllerTest {
@@ -21,18 +17,22 @@ class SupportTicketControllerTest {
     private SupportTicketService supportTicketService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DepartmentService departmentService;
 
 
     @Test
     void registerSupportTicket() {
         SupportTicket supportTicket = new SupportTicket();
-        supportTicket.setObject("Teste");
-        supportTicket.setDescription("testando");
-        supportTicket.setPriority(PriorityRole.CRITICA);
+        supportTicket.setObject("Xcelera não transfere para o outro computador");
+        supportTicket.setDescription("Já enviei mais de três vezes e nada");
 
-        User createdBy = userService.getByUsername("admin");
+        Department department = departmentService.findById(2);
+        supportTicket.setDepartment(department);
 
-        supportTicketService.create(supportTicket, (User) createdBy);
+        User createdBy = userService.getByUsername("TI");
+
+        supportTicketService.create(supportTicket, createdBy);
     }
 
 }
