@@ -30,7 +30,7 @@ class SupportTicketControllerTest {
         Department department = departmentService.findById(2);
         supportTicket.setDepartment(department);
 
-        User createdBy = userService.getByUsername("TI");
+        User createdBy = userService.getByUsername("admin");
 
         supportTicketService.create(supportTicket, createdBy);
     }

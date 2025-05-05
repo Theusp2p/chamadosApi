@@ -45,7 +45,7 @@ public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean mustConvert(Authentication authentication) {
-        return authentication != null && authentication instanceof JwtAuthenticationToken;
+        return authentication instanceof JwtAuthenticationToken;
     }
 
 

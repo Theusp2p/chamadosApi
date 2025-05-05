@@ -25,12 +25,13 @@ class UserRepositoryTest {
     @Test
     void isertUser(){
         User user = new User();
-        user.setName("Tecnologia da Informação");
-        user.setUsername("TI");
-        user.setPassword(passwordEncoder.encode("ti123"));
+        user.setName("admin");
+        user.setUsername("admin");
+        user.setPassword(passwordEncoder.encode("admin"));
         user.setIsActive(true);
         user.setCreatedAt(LocalDateTime.now());
         user.setRole(UserRole.ADMIN);
+        user.setCreatedBy("admin");
 
         Department department = departmentRepository.findById(1).get();
 
@@ -38,6 +39,8 @@ class UserRepositoryTest {
 
         userRepository.save(user);
     }
+
+
 
     @Test
     void updateUser(){

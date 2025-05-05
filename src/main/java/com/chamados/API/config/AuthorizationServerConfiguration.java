@@ -147,7 +147,7 @@ public class AuthorizationServerConfiguration {
                     context
                             .getClaims()
                             .claim("authorities", authoritiesList) //CustomAuthentication já busca as roles e define como authorities
-                            .claim("username", authentication.getUser().getUsername());
+                            .claim("username", authentication.user().getUsername());
                 }
             }
         };

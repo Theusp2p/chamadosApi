@@ -1,4 +1,4 @@
-package com.chamados.API.controllers.webControllers.admin;
+package com.chamados.API.controllers.webControllers.user;
 
 import com.chamados.API.security.CustomAuthentication;
 import com.chamados.API.services.SupportTicketService;
@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/user")
 @RequiredArgsConstructor
-public class AdminViewController {
+public class UserViewController {
 
     private final SupportTicketService ticketService;
     private final UserService userService;
@@ -29,6 +29,7 @@ public class AdminViewController {
         model.addAttribute("openTicketsCount", ticketService.countOpenTickets());
         model.addAttribute("opensTickets", ticketService.filterByStatusOpen());
 
-        return "admin/dashboard"; // Agora aponta para o template único
+        return "user/dashboard"; // Agora aponta para o template único
     }
+
 }

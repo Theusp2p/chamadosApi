@@ -48,7 +48,6 @@ public class SupportTicketService {
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setStatus(SupportTicketStatusRole.ABERTO);
         ticket.setPriority(PriorityRole.MEDIA);
-        ticket.setAttributedTo("Tecnologia da Informação");
         return repository.save(ticket);
     }
 
