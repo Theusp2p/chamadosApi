@@ -22,7 +22,7 @@ public class LoginViewController {
                 boolean isAdmin = authentication.getAuthorities()
                         .stream()
                         .anyMatch(grantedAuthority ->
-                                grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+                                grantedAuthority.getAuthority().equals("ADMIN"));
 
                 return isAdmin ? "redirect:/admin/dashboard" : "redirect:/user/dashboard";
             }

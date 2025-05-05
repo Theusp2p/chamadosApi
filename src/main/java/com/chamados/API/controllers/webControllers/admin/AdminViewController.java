@@ -1,16 +1,14 @@
 package com.chamados.API.controllers.webControllers.admin;
 
-import com.chamados.API.entities.enums.PriorityRole;
-import com.chamados.API.entities.enums.SupportTicketStatusRole;
 import com.chamados.API.security.CustomAuthentication;
 import com.chamados.API.services.SupportTicketService;
+import com.chamados.API.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminViewController {
 
     private final SupportTicketService ticketService;
+    private final UserService userService;
 
     @GetMapping("/dashboard")
     public String adminDashboard(Authentication authentication, Model model) {

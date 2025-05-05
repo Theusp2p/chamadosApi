@@ -142,8 +142,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version> <!-- Versão explícita recomendada -->
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<source>21</source>
+					<target>21</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -161,7 +161,8 @@
 							<version>${mapstruct.version}</version>
 						</path>
 					</annotationProcessorPaths>
-				</configuration>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
 			</plugin>
 
 			<plugin>

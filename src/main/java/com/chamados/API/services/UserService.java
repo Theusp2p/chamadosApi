@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.ScopedValue;
 import java.util.List;
 
 @Service
@@ -33,5 +34,13 @@ public class UserService {
 
     public List<User> findByTechnicals() {
         return userRepository.findByTechnicals();
+    }
+
+    public List<User> searchUsers(String search) {
+       return userRepository.searchUsers(search);
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }

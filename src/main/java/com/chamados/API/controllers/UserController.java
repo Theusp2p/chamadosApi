@@ -22,7 +22,7 @@ public class UserController implements GenericController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> insertUser(@RequestBody @Valid UserDTO userDTO){
         User user = userService.insertUser(userMapper.toEntity(userDTO));
-        return ResponseEntity.created(generateHeaderLocation(user.getId())).build();
+        return ResponseEntity.created(generateHeaderLocation(Math.toIntExact(user.getId()))).build();
     }
 
     @GetMapping
