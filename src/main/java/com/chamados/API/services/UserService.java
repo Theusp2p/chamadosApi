@@ -7,8 +7,6 @@ import com.chamados.API.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.lang.ScopedValue;
 import java.util.List;
 
 @Service

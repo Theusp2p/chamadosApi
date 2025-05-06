@@ -10,12 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.List;
 
-@RequiredArgsConstructor
-@Getter
-public class CustomAuthentication  implements Authentication {
 
-
-    private final User user;
+public record CustomAuthentication(User user) implements Authentication {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {

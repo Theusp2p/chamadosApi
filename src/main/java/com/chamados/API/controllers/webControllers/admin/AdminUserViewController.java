@@ -1,6 +1,7 @@
 package com.chamados.API.controllers.webControllers.admin;
 
 import com.chamados.API.entities.User;
+import com.chamados.API.security.CustomAuthentication;
 import com.chamados.API.services.DepartmentService;
 import com.chamados.API.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -47,21 +48,24 @@ public class AdminUserViewController {
         return "admin/users/edit";
     }
 
+
+
     @PostMapping("/salvar")
     public String saveUser(@ModelAttribute User user,
                            @RequestParam(required = false) String action,
                            Authentication authentication,
                            RedirectAttributes redirectAttributes) {
 
+
         if (authentication != null && authentication.isAuthenticated()) {
             User currentUser = (User) authentication.getPrincipal();
 
             if (user.getId() == null) {
                 // Novo usuário - seta createdBy
-                user.setCreatedBy(currentUser);
+                user.setCreatedBy(currentUser.getName());
             } else {
                 // Usuário existente - seta lastModifiedBy
-                user.setLastModifiedBy(currentUser.getUsername());
+                user.setLastModifiedBy(currentUser.getName());
             }
         }
 
@@ -75,4 +79,8 @@ public class AdminUserViewController {
         redirectAttributes.addFlashAttribute("success", "Usuário cadastrado com sucesso!");
         return "redirect:/admin/usuarios";
     }
+
+
+
+
 }

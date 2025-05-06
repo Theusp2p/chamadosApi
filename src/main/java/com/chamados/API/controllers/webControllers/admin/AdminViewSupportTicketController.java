@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/chamados")
 @RequiredArgsConstructor
-public class SupportTicketController {
+public class AdminViewSupportTicketController {
 
     private final SupportTicketService ticketService;
     private final UserService userService;
