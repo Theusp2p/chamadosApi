@@ -281,7 +281,7 @@
                                     <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
                                 </small><br>
                                 <small class="text-muted">Criado Por:
-                                    <span th:text="${user.createdBy} ?: #authentication.getName()"></span>
+                                    <span th:text="${user.getCreatedBy()}"></span>
                                 </small>
                             </div>
                             <div class="col-md-6">
@@ -289,7 +289,7 @@
                                     <span th:text="${#temporals.format(user.lastModifiedAt, 'dd/MM/yyyy HH:mm')}"></span>
                                 </small><br>
                                 <small class="text-muted">Modificado Por:
-                                    <span th:text="${user.lastModifiedBy} ?: #authentication.getName()"></span>
+                                    <span th:text="${user.lastModifiedBy}"></span>
                                 </small>
                             </div>
                         </div>

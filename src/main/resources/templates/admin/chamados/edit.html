@@ -256,8 +256,8 @@
                                 <select class="form-select" id="attributedTo" th:field="*{attributedTo}">
                                     <option value="">-- Selecione --</option>
                                     <option th:each="tech : ${technical}"
-                                            th:value="${tech.name}"
-                                            th:text="${tech.name}"></option>
+                                            th:value="${tech.username}"
+                                            th:text="${tech.username}"></option>
                                 </select>
                             </div>
                         </div>

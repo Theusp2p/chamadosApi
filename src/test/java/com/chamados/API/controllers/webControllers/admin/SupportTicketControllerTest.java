@@ -31,8 +31,9 @@ class SupportTicketControllerTest {
         supportTicket.setDepartment(department);
 
         User createdBy = userService.getByUsername("admin");
+        supportTicket.setCreatedBy(String.valueOf(createdBy));
 
-        supportTicketService.create(supportTicket, createdBy);
+        supportTicketService.create(supportTicket);
     }
 
 }

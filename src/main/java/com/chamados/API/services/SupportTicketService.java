@@ -43,15 +43,15 @@ public class SupportTicketService {
         return repository.findById(id).orElse(null);
     }
 
-    public SupportTicket create(SupportTicket ticket, User createdBy) {
-        ticket.setCreatedBy(createdBy);
+    public SupportTicket create(SupportTicket ticket) {
+        ticket.setCreatedBy(ticket.getCreatedBy());
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setStatus(SupportTicketStatusRole.ABERTO);
         ticket.setPriority(PriorityRole.MEDIA);
         return repository.save(ticket);
     }
 
-    public SupportTicket update(Long id, SupportTicket ticketDetails, User modifiedBy) {
+    public SupportTicket update(Long id, SupportTicket ticketDetails) {
         SupportTicket ticket = findById(id);
         if (ticket != null) {
             ticket.setObject(ticketDetails.getObject());
@@ -59,7 +59,7 @@ public class SupportTicketService {
             ticket.setComment(ticketDetails.getComment());
             ticket.setPriority(ticketDetails.getPriority());
             ticket.setStatus(ticketDetails.getStatus());
-            ticket.setLastModifiedBy("TI");
+            ticket.setLastModifiedBy(ticketDetails.getLastModifiedBy());
             ticket.setUpdatedAt(LocalDateTime.now());
             return repository.save(ticket);
         }

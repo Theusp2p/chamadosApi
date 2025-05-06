@@ -60,9 +60,8 @@ public class SupportTicket {
     private String lastModifiedBy;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "created_by" , nullable = false)
-    private User createdBy;
+    @Column(name = "created_by" , nullable = false)
+    private String createdBy;
 
 
 

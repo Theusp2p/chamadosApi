@@ -141,7 +141,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <i class="fas fa-user-circle me-1"></i>
-                    <span th:text="${#authentication.principal.username}">Admin</span>
+                    <span th:text="${#authentication.getName()}">Admin</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="#">Perfil</a></li>
@@ -195,7 +195,7 @@
     <!-- Rodapé do Sidebar -->
     <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
         <div>Logado como:</div>
-        <strong th:text="${#authentication.principal.username}">Admin</strong>
+        <strong th:text="${#authentication.getName()}">Admin</strong>
     </div>
 </div>
 
@@ -249,7 +249,7 @@
                                 <a th:href="@{/admin/chamados/{id}(id=${ticket.id})}"
                                    th:text="${ticket.object}">Problema com impressora</a>
                             </td>
-                            <td th:text="${ticket.createdBy.username}">João Silva</td>
+                            <td th:text="${ticket.createdBy}">João Silva</td>
                             <td th:text="${ticket.department.name}">Hemodinâmica</td>
                             <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">10/05/2023 14:30</td>
                             <td>

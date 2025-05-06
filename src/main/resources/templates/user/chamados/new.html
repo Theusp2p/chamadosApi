@@ -206,7 +206,7 @@
             </a>
         </div>
 
-        <form th:action="@{/user/chamado/salvar}" method="post" th:object="${supportTicket}" class="form-ticket">
+        <form th:action="@{/user/chamados/salvar}" method="post" th:object="${ticket}" class="form-ticket">
             <div class="card">
                 <div class="card-header bg-white">
                     <h5 class="mb-0">Informações do Chamado</h5>
@@ -235,26 +235,6 @@
                                   rows="5" required
                                   placeholder="Descreva com detalhes o problema encontrado, incluindo quaisquer mensagens de erro ou passos para reproduzir o problema."></textarea>
                         <small class="text-muted">Forneça o máximo de detalhes possível para agilizar o atendimento.</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Prioridade</label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="priority" id="priority-low" autocomplete="off" checked>
-                            <label class="btn btn-outline-success" for="priority-low">
-                                <i class="fas fa-arrow-down"></i> Baixa
-                            </label>
-
-                            <input type="radio" class="btn-check" name="priority" id="priority-medium" autocomplete="off">
-                            <label class="btn btn-outline-warning" for="priority-medium">
-                                <i class="fas fa-arrow-right"></i> Média
-                            </label>
-
-                            <input type="radio" class="btn-check" name="priority" id="priority-high" autocomplete="off">
-                            <label class="btn btn-outline-danger" for="priority-high">
-                                <i class="fas fa-arrow-up"></i> Alta
-                            </label>
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-end">

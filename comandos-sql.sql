@@ -43,5 +43,5 @@ create table support_ticket(
    attributed_to varchar(30),
    last_modified_by varchar(15),
    id_department int not null references department(id),
-   created_by int not null references tb_user(id)
+   created_by varchar(15) not null
 )
