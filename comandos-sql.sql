@@ -12,7 +12,7 @@ create table tb_user(
     created_at timestamp,
     updated_at timestamp,
     last_modified_by varchar(15),
-    created_by int references tb_user(id),
+    created_by varchar(15) not null,
     is_active boolean not null default true,
     id_department int references department(id)
 )
