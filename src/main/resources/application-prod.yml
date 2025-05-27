@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chamadosapi
+    username: postgres
+    password: Ruy*p2p!
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true

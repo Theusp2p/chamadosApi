@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Chamado</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Layout principal */
+        body {
+            font-size: 0.9rem;
+            padding-top: 56px;
+            background-color: #f5f5f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: calc(100vh - 56px);
+            position: fixed;
+            left: 0;
+            top: 56px;
+            background: #0c0c2c; /* Company blue */
+            z-index: 100;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 0.75rem 1rem;
+            border-left: 0.25rem solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #a11c1c; /* Company red */
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Header */
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+            height: 56px;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            background-color: #0c0c2c; /* Company blue */
+        }
+
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            background-color: white;
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: white;
+            font-weight: 600;
+            color: #0c0c2c; /* Company blue */
+        }
+
+        .card-footer {
+            background-color: white;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Formulário */
+        .form-ticket {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: #a11c1c; /* Company red */
+            border-color: #a11c1c;
+        }
+
+        .btn-primary:hover {
+            background-color: #8e1818;
+            border-color: #8e1818;
+        }
+
+        .btn-outline-secondary {
+            color: #0c0c2c; /* Company blue */
+            border-color: #0c0c2c;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #0c0c2c;
+            color: white;
+        }
+
+        /* Títulos */
+        h1, h2, h3, h4, h5, h6 {
+            color: #0c0c2c; /* Company blue */
+        }
+
+        /* Labels do formulário */
+        .form-label {
+            color: #0c0c2c; /* Company blue */
+            font-weight: 500;
+        }
+
+        /* Input focus */
+        .form-control:focus, .form-select:focus {
+            border-color: #a11c1c;
+            box-shadow: 0 0 0 0.25rem rgba(161, 28, 28, 0.25);
+        }
+
+        /* Responsividade */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-collapse {
+                display: block;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .card-footer .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .row > div {
+                margin-bottom: 1rem;
+            }
+
+            .card-footer {
+                flex-direction: column;
+            }
+
+            .card-footer .btn {
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-collapse {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<nav class="navbar navbar-expand navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/user/dashboard}">
+            <i class="fas fa-tools me-2"></i>
+            <span class="d-none d-sm-inline">Sistema de Chamados</span>
+        </a>
+
+        <button class="navbar-toggler sidebar-collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${#authentication.getName()}">Usuário</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Sair</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-menu pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:classappend="${activePage == 'novo-chamado'} ? 'active'" th:href="@{/user/chamado/novo}">
+                    <i class="fas fa-plus-circle"></i>
+                    Novo Chamado
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
+        <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Novo Chamado</h1>
+            <a th:href="@{/user/dashboard}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        <form th:action="@{/user/chamados/salvar}" method="post" th:object="${ticket}" class="form-ticket">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Informações do Chamado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="object" class="form-label">Assunto *</label>
+                        <input type="text" class="form-control" id="object" th:field="*{object}" required
+                               placeholder="Descreva brevemente o problema">
+                        <small class="text-muted">Exemplo: "Problema com impressora HP no setor de RH"</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Departamento *</label>
+                        <select class="form-select" id="department" th:field="*{department.id}" required>
+                            <option value="">-- Selecione o Departamento --</option>
+                            <option th:each="dept : ${departments}"
+                                    th:value="${dept.id}"
+                                    th:text="${dept.name}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrição Detalhada *</label>
+                        <textarea class="form-control" id="description" th:field="*{description}"
+                                  rows="5" required
+                                  placeholder="Podemos resolver remotamente? Nos informe o AnyDesk também: "></textarea>
+                        <small class="text-muted">Forneça o máximo de detalhes possível para agilizar o atendimento.</small>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <button type="reset" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Enviar Chamado
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarCollapse = document.querySelector('.sidebar-collapse');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (sidebarCollapse && sidebar) {
+            sidebarCollapse.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.addEventListener('click', function() {
+                if (window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

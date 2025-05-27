@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuários</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Customizado -->
+    <style>
+        /* Layout principal */
+        body {
+            font-size: 0.9rem;
+            padding-top: 56px;
+            background-color: #f5f5f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: calc(100vh - 56px);
+            position: fixed;
+            left: 0;
+            top: 56px;
+            background: #0c0c2c; /* Azul da empresa */
+            z-index: 100;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 0.75rem 1rem;
+            border-left: 0.25rem solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #a11c1c; /* Vermelho da empresa */
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Header */
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+            height: 56px;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            background-color: #0c0c2c; /* Azul da empresa */
+        }
+
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Títulos */
+        h1, h2, h3, h4, h5, h6 {
+            color: #0c0c2c; /* Azul da empresa */
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            background-color: white;
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: white;
+            font-weight: 600;
+            color: #0c0c2c; /* Azul da empresa */
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: #a11c1c; /* Vermelho da empresa */
+            border-color: #a11c1c;
+        }
+
+        .btn-primary:hover {
+            background-color: #8e1818;
+            border-color: #8e1818;
+        }
+
+        .btn-outline-secondary {
+            color: #0c0c2c; /* Azul da empresa */
+            border-color: #0c0c2c;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #0c0c2c;
+            color: white;
+        }
+
+        .btn-outline-primary {
+            color: #a11c1c; /* Vermelho da empresa */
+            border-color: #a11c1c;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #a11c1c;
+            color: white;
+        }
+
+        /* Tabela */
+        .table {
+            background-color: white;
+        }
+
+        .table th {
+            color: #0c0c2c; /* Azul da empresa */
+            border-bottom: 2px solid #0c0c2c;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: rgba(12, 12, 44, 0.03); /* Azul muito claro */
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+
+        .badge-bg-success {
+            background-color: #28a745;
+        }
+
+        .badge-bg-secondary {
+            background-color: #6c757d;
+        }
+
+        /* Barra de pesquisa */
+        .input-group {
+            max-width: 500px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-collapse {
+                display: block;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .d-flex.justify-content-between .btn {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-collapse {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<nav class="navbar navbar-expand navbar-dark">
+    <div class="container-fluid">
+        <!-- Logo e nome -->
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">
+            <i class="fas fa-tools me-2"></i>
+            <span class="d-none d-sm-inline">Sistema de Chamados</span>
+        </a>
+
+        <!-- Botão para recolher sidebar (visível apenas em mobile) -->
+        <button class="navbar-toggler sidebar-collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu do usuário -->
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${#authentication.getName()}">Admin</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><a class="dropdown-item" href="#">Configurações</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Sair</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-menu pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'chamados'} ? 'active'" th:href="@{/admin/chamados}">
+                    <i class="fas fa-ticket-alt"></i>
+                    Chamados
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'usuarios'} ? 'active'" th:href="@{/admin/usuarios}">
+                    <i class="fas fa-users"></i>
+                    Usuários
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'departamentos'} ? 'active'" th:href="@{/admin/departamentos}">
+                    <i class="fas fa-users"></i>
+                    Departamentos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" th:classappend="${activePage == 'relatorios'} ? 'active'" th:href="@{/admin/relatorios}">
+                    <i class="fas fa-chart-bar"></i>
+                    Relatórios
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" th:classappend="${activePage == 'configuracoes'} ? 'active'" th:href="@{/admin/configuracoes}">
+                    <i class="fas fa-cog"></i>
+                    Configurações
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Rodapé do Sidebar -->
+    <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
+        <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gerenciamento de Usuários</h1>
+            <a th:href="@{/admin/usuarios/novo}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Usuário
+            </a>
+        </div>
+
+        <!-- Search Bar -->
+        <form th:action="@{/admin/usuarios}" method="get" class="mb-4" id="searchForm">
+            <div class="input-group">
+                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Pesquise por nome ou usuário" th:value="${search}" autocomplete="off">
+                <button type="submit" class="btn btn-outline-secondary">Pesquisar</button>
+            </div>
+        </form>
+
+        <!-- User Table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td>
+                        <span th:if="${user.isActive}" class="badge bg-success">Ativo</span>
+                        <span th:unless="${user.isActive}" class="badge bg-secondary">Inativo</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/usuarios/{id}/editar(id=${user.id})}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Toggle do sidebar em mobile
+        const sidebarCollapse = document.querySelector('.sidebar-collapse');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (sidebarCollapse && sidebar) {
+            sidebarCollapse.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+
+        // 2. Fechar sidebar ao clicar no conteúdo principal (em mobile)
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.addEventListener('click', function() {
+                if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        }
+
+        // 3. Busca em tempo real
+        const searchInput = document.getElementById('searchInput');
+        const searchForm = document.getElementById('searchForm');
+        let typingTimer;
+        const doneTypingInterval = 300; // 300ms de atraso
+
+        function fetchUsers(searchTerm) {
+            fetch(`/admin/usuarios?search=${encodeURIComponent(searchTerm)}&ajax=true`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTable = doc.querySelector('tbody');
+
+                    if (newTable) {
+                        document.querySelector('tbody').innerHTML = newTable.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        if (searchInput && searchForm) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    fetchUsers(this.value);
+                }, doneTypingInterval);
+            });
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetchUsers(searchInput.value);
+            });
+        }
+    });
+</script>
+</body>
+</html>

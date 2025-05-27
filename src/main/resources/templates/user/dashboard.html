@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard User</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Customizado -->
+    <style>
+        /* Layout principal */
+        body {
+            font-size: 0.9rem;
+            padding-top: 56px;
+            background-color: #f5f5f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: calc(100vh - 56px);
+            position: fixed;
+            left: 0;
+            top: 56px;
+            background: #0c0c2c; /* Company blue */
+            z-index: 100;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 0.75rem 1rem;
+            border-left: 0.25rem solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #a11c1c; /* Company red */
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Header */
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+            height: 56px;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            background-color: #0c0c2c; /* Company blue */
+        }
+
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            background-color: white;
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: white;
+            font-weight: 600;
+            color: #0c0c2c; /* Company blue */
+        }
+
+        /* Summary Cards */
+
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+
+        /* Table */
+        .table {
+            background-color: white;
+        }
+
+        .table th {
+            color: #0c0c2c; /* Company blue */
+            border-bottom: 2px solid #0c0c2c;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(12, 12, 44, 0.05); /* Very light blue */
+        }
+
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            color: #0c0c2c; /* Company blue */
+        }
+
+        /* Responsividade */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-collapse {
+                display: block;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-collapse {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<nav class="navbar navbar-expand navbar-dark">
+    <div class="container-fluid">
+        <!-- Logo e nome -->
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-tools me-2"></i>
+            <span class="d-none d-sm-inline">Sistema de Chamados</span>
+        </a>
+
+        <!-- Botão para recolher sidebar (visível apenas em mobile) -->
+        <button class="navbar-toggler sidebar-collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu do usuário -->
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${#authentication.getName()}">Admin</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Sair</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-menu pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Rodapé do Sidebar -->
+    <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
+        <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
+    </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<main class="main-content">
+    <div class="container-fluid">
+        <h1 class="h2 mb-4">Dashboard</h1>
+
+        <!-- Cards de Resumo -->
+        <div class="row">
+            <!-- Card de contagem (mantido) -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="text-muted mb-2">Chamados Abertos</h6>
+                                <h3 class="mb-0" th:text="${openTicketsCount}">0</h3>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-ticket-alt text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a th:href="@{/user/chamados/novo}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Novo Chamado
+                </a>
+            </div>
+        </div>
+
+        <!-- Nova seção para listagem -->
+        <div class="card mt-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Lista de Chamados Abertos</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Assunto</th>
+                            <th>Departamento</th>
+                            <th>Data Abertura</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ticket : ${opensTickets}">
+                            <td th:text="${ticket.id}">123</td>
+                            <td th:text="${ticket.object}">Problema com impressora</td>
+                            <td th:text="${ticket.department.name}">Hemodinâmica</td>
+                            <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">10/05/2023 14:30</td>
+                        </tr>
+                        <tr th:if="${opensTickets == null}">
+                            <td colspan="5" class="text-center text-muted">
+                                Nenhum chamado aberto no momento
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Toggle do sidebar em mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarCollapse = document.querySelector('.sidebar-collapse');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (sidebarCollapse && sidebar) {
+            sidebarCollapse.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+
+        // Fechar sidebar ao clicar no conteúdo principal (em mobile)
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.addEventListener('click', function() {
+                if (window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
