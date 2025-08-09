@@ -21,9 +21,9 @@ public final class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 80, nullable = false)
     private String name;
-    @Column(unique = true, length = 15, nullable = false)
+    @Column(unique = true, length = 30, nullable = false)
     private String username;
     @Column(length = 250, nullable = false)
     private String password;

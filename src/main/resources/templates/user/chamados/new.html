@@ -1,33 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Chamado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo Chamado - Sistema de Chamados</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Layout principal */
         body {
             font-size: 0.9rem;
             padding-top: 56px;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 250px;
             height: calc(100vh - 56px);
             position: fixed;
-            left: 0;
             top: 56px;
-            background: #0c0c2c; /* Company blue */
-            z-index: 100;
+            left: 0;
+            background: #0c0c2c;
+            z-index: 1000;
             overflow-y: auto;
-            transition: all 0.3s;
+            transition: transform 0.3s ease;
         }
 
         .sidebar .nav-link {
@@ -45,7 +44,7 @@
         .sidebar .nav-link.active {
             color: white;
             background-color: rgba(255, 255, 255, 0.1);
-            border-left-color: #a11c1c; /* Company red */
+            border-left-color: #a11c1c;
         }
 
         .sidebar .nav-link i {
@@ -54,14 +53,12 @@
             text-align: center;
         }
 
-        /* Conteúdo principal */
         .main-content {
             margin-left: 250px;
             padding: 20px;
             transition: all 0.3s;
         }
 
-        /* Header */
         .navbar {
             position: fixed;
             top: 0;
@@ -69,30 +66,56 @@
             left: 0;
             z-index: 1030;
             height: 56px;
-            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
-            background-color: #0c0c2c; /* Company blue */
+            background-color: #0c0c2c;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .navbar-brand {
+            color: white;
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: white;
         }
 
         .logo {
             max-width: 150px;
-            margin: 0 auto 20px;
             display: block;
+            margin: 20px auto;
         }
 
-        /* Cards */
+        /* Estilos específicos da página */
         .card {
             border: none;
             border-radius: 0.5rem;
             box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
             margin-bottom: 1.5rem;
-            background-color: white;
         }
 
         .card-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            background-color: white;
             font-weight: 600;
-            color: #0c0c2c; /* Company blue */
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .card-footer {
@@ -100,25 +123,18 @@
             border-top: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Formulário */
-        .form-ticket {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Botões */
         .btn-primary {
-            background-color: #a11c1c; /* Company red */
+            background-color: #a11c1c;
             border-color: #a11c1c;
         }
 
         .btn-primary:hover {
-            background-color: #8e1818;
-            border-color: #8e1818;
+            background-color: #8c1818;
+            border-color: #8c1818;
         }
 
         .btn-outline-secondary {
-            color: #0c0c2c; /* Company blue */
+            color: #0c0c2c;
             border-color: #0c0c2c;
         }
 
@@ -127,27 +143,29 @@
             color: white;
         }
 
-        /* Títulos */
-        h1, h2, h3, h4, h5, h6 {
-            color: #0c0c2c; /* Company blue */
-        }
-
-        /* Labels do formulário */
         .form-label {
-            color: #0c0c2c; /* Company blue */
             font-weight: 500;
+            color: #0c0c2c;
         }
 
-        /* Input focus */
         .form-control:focus, .form-select:focus {
             border-color: #a11c1c;
             box-shadow: 0 0 0 0.25rem rgba(161, 28, 28, 0.25);
         }
 
-        /* Responsividade */
+        .form-ticket {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /*Responsividade*/
         @media (max-width: 991.98px) {
             .sidebar {
-                left: -250px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
             }
 
             .main-content {
@@ -155,121 +173,110 @@
                 padding: 15px;
             }
 
-            .sidebar.show {
-                left: 0;
-            }
-
-            .sidebar-collapse {
+            .navbar-toggler {
                 display: block;
             }
 
-            .card-body {
-                padding: 1rem;
+            .user-info span {
+                display: none;
             }
 
             .card-footer .btn {
-                margin-bottom: 0.5rem;
                 width: 100%;
-            }
-        }
-
-        @media (max-width: 767.98px) {
-            .row > div {
-                margin-bottom: 1rem;
-            }
-
-            .card-footer {
-                flex-direction: column;
-            }
-
-            .card-footer .btn {
                 margin-bottom: 0.5rem;
             }
         }
 
         @media (min-width: 992px) {
-            .sidebar-collapse {
+            .navbar-toggler {
                 display: none;
             }
         }
     </style>
 </head>
 <body>
-<!-- Header -->
-<nav class="navbar navbar-expand navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/user/dashboard}">
-            <i class="fas fa-tools me-2"></i>
-            <span class="d-none d-sm-inline">Sistema de Chamados</span>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark">
+    <!-- Menu toggle para mobile -->
+    <button class="navbar-toggler border-0 bg-transparent" type="button" id="menu-toggle">
+        <i class="fas fa-bars text-white fs-4"></i>
+    </button>
+
+    <a class="navbar-brand" href="#">
+        <i class="fas fa-tools me-2"></i> Sistema de Chamados
+    </a>
+
+    <div class="user-info">
+        <span th:text="${#authentication.getName()}">Usuário</span>
+        <a class="logout-btn" th:href="@{/logout}" title="Sair">
+            <i class="fas fa-sign-out-alt"></i>
         </a>
-
-        <button class="navbar-toggler sidebar-collapse" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-circle me-1"></i>
-                    <span th:text="${#authentication.getName()}">Usuário</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" th:href="@{/logout}">Sair</a></li>
-                </ul>
-            </li>
-        </ul>
     </div>
 </nav>
 
 <!-- Sidebar -->
-<div class="sidebar">
-    <div class="sidebar-menu pt-3">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" th:classappend="${activePage == 'novo-chamado'} ? 'active'" th:href="@{/user/chamado/novo}">
-                    <i class="fas fa-plus-circle"></i>
-                    Novo Chamado
-                </a>
-            </li>
-        </ul>
-    </div>
+<div class="sidebar" id="sidebar">
 
+    <ul class="nav flex-column pt-3">
+        <li class="nav-item">
+            <a class="nav-link " th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:classappend="${activePage == 'novo-chamado'} ? 'active'" th:href="@{/user/chamados/novo}">
+                <i class="fas fa-plus-circle"></i> Novo Chamado
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " th:classappend="${activePage == 'meus-chamados'} ? 'active'" th:href="@{/user/chamados/meus-chamados}">
+                <i class="fas fa-list"></i> Meus Chamados
+            </a>
+        </li>
+    </ul>
+    <!-- Rodapé do Sidebar -->
     <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
         <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
     </div>
 </div>
 
-<!-- Main Content -->
-<div class="main-content">
-    <div class="container mt-4">
+<!-- Conteúdo Principal -->
+<main class="main-content">
+    <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Novo Chamado</h1>
+            <h1 class="h2 mb-0">Novo Chamado</h1>
             <a th:href="@{/user/dashboard}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar
+                <i class="fas fa-arrow-left me-1"></i> Voltar
             </a>
         </div>
 
         <form th:action="@{/user/chamados/salvar}" method="post" th:object="${ticket}" class="form-ticket">
             <div class="card">
-                <div class="card-header bg-white">
+                <div class="card-header">
                     <h5 class="mb-0">Informações do Chamado</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Campo "Assunto" (100 caracteres) -->
                     <div class="mb-3">
                         <label for="object" class="form-label">Assunto *</label>
-                        <input type="text" class="form-control" id="object" th:field="*{object}" required
-                               placeholder="Descreva brevemente o problema">
-                        <small class="text-muted">Exemplo: "Problema com impressora HP no setor de RH"</small>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="object"
+                                th:field="*{object}"
+                                maxlength="100"
+                                required
+                                placeholder="Descreva brevemente o problema (máx. 100 caracteres)"
+                                oninput="updateCounter('object', 'object-counter', 100)"
+                        >
+                        <small class="text-muted">
+                            Exemplo: "Problema com impressora HP no setor de RH" |
+                            <span id="object-counter">100</span> caracteres restantes
+                        </small>
                     </div>
 
+                    <!-- Campo "Departamento" (select, sem limitação) -->
                     <div class="mb-3">
                         <label for="department" class="form-label">Departamento *</label>
                         <select class="form-select" id="department" th:field="*{department.id}" required>
@@ -280,47 +287,77 @@
                         </select>
                     </div>
 
+                    <!-- Campo "Descrição" (500 caracteres) -->
                     <div class="mb-3">
                         <label for="description" class="form-label">Descrição Detalhada *</label>
-                        <textarea class="form-control" id="description" th:field="*{description}"
-                                  rows="5" required
-                                  placeholder="Podemos resolver remotamente? Nos informe o AnyDesk também: "></textarea>
-                        <small class="text-muted">Forneça o máximo de detalhes possível para agilizar o atendimento.</small>
+                        <textarea
+                                class="form-control"
+                                id="description"
+                                th:field="*{description}"
+                                maxlength="500"
+                                rows="5"
+                                required
+                                placeholder="Descreva o problema detalhadamente (máx. 500 caracteres)"
+                                oninput="updateCounter('description', 'description-counter', 500)"
+                        ></textarea>
+                        <small class="text-muted">
+                            Forneça o máximo de detalhes possível. |
+                            <span id="description-counter">500</span> caracteres restantes
+                        </small>
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <button type="reset" class="btn btn-outline-secondary me-2">
-                        <i class="fas fa-eraser"></i> Limpar
+                        <i class="fas fa-eraser me-1"></i> Limpar
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Enviar Chamado
+                        <i class="fas fa-paper-plane me-1"></i> Enviar Chamado
                     </button>
                 </div>
             </div>
         </form>
     </div>
-</div>
+</main>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarCollapse = document.querySelector('.sidebar-collapse');
-        const sidebar = document.querySelector('.sidebar');
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
 
-        if (sidebarCollapse && sidebar) {
-            sidebarCollapse.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
-            });
-        }
+        toggleBtn?.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
 
         const mainContent = document.querySelector('.main-content');
         if (mainContent) {
-            mainContent.addEventListener('click', function() {
+            mainContent.addEventListener('click', () => {
                 if (window.innerWidth < 992) {
                     sidebar.classList.remove('show');
                 }
             });
         }
+    });
+
+    function updateCounter(inputId, counterId, maxLength) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        const remaining = maxLength - input.value.length;
+        counter.textContent = remaining;
+
+        // Opcional: Mudar cor se estiver acabando
+        if (remaining < 20) {
+            counter.style.color = "red";
+        } else {
+            counter.style.color = "";
+        }
+    }
+
+    // Inicializa os contadores ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCounter('object', 'object-counter', 100);
+        updateCounter('description', 'description-counter', 500);
     });
 </script>
 </body>

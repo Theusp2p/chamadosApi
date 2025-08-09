@@ -24,32 +24,41 @@ public class SecurityConfiguration {
             HttpSecurity http, SecurityFilterChain oauth2SecurityFilterChain) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(configurer -> {
-                    configurer
-                            .loginPage("/login").permitAll()
-                            .successHandler((request, response, authentication) -> {
+                .formLogin(configurer -> configurer
+                        .loginPage("/login").permitAll()
+                        .successHandler((request, response, authentication) -> {
+                            // Pega o usuário autenticado
+                            Object principal = authentication.getPrincipal();
+                            if (principal instanceof com.chamados.API.entities.User user) {
+                                if (Boolean.TRUE.equals(user.getIsChangePasswordNextLogin())) {
+                                    response.sendRedirect("/resetar-senha");
+                                    return;
+                                }
 
                                 if (authentication.getAuthorities().stream()
                                         .anyMatch(grantedAuthority ->
                                                 grantedAuthority.getAuthority().equals("ADMIN"))) {
                                     response.sendRedirect("/admin/dashboard");
-                                }else {
+                                } else {
                                     response.sendRedirect("/user/dashboard");
                                 }
-                            })
-                            .failureUrl("/login?error");
-                })
-
-                .authorizeHttpRequests(authorize ->{
-                    authorize.requestMatchers("/login/**").permitAll();
-                    authorize.requestMatchers("icons/**").permitAll();
-                    authorize.requestMatchers("/user/**").hasAnyAuthority("ADMIN", "USER");
-                    authorize.requestMatchers("/admin/**").hasAuthority("ADMIN");
-                    authorize.anyRequest().authenticated();
-                })
-
+                            } else {
+                                response.sendRedirect("/login?error");
+                            }
+                        })
+                        .failureUrl("/login?error")
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/resetar-senha/**").permitAll()
+                        .requestMatchers("/icons/**").permitAll()
+                        .requestMatchers("/user/**").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .anyRequest().authenticated()
+                )
                 .build();
     }
+
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

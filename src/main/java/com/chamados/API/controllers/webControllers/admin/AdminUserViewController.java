@@ -59,7 +59,9 @@ public class AdminUserViewController {
     public String saveEdit(@PathVariable Long id,
                            @ModelAttribute("user") User updatedUser,
                            @RequestParam(required = false) String action,
+                           Authentication authentication,
                            RedirectAttributes redirectAttributes) {
+
 
         // Ativação ou desativação explícita via botão ou formulário
         if ("deactivate".equals(action)) {
@@ -68,8 +70,10 @@ public class AdminUserViewController {
             updatedUser.setIsActive(true);
         }
 
+        updatedUser.setLastModifiedBy(authentication.getName());
+
         userService.updateUser(id, updatedUser);
-        redirectAttributes.addFlashAttribute("sucess", "Usuário atualizado com sucesso!");
+        redirectAttributes.addFlashAttribute("success", "Usuário atualizado com sucesso!");
         return "redirect:/admin/usuarios";
     }
 
@@ -85,8 +89,6 @@ public class AdminUserViewController {
 
                 if (user.getId() == null) {
                     user.setCreatedBy(currentUser.getName());
-                } else {
-                    user.setLastModifiedBy(currentUser.getName());
                 }
             }
 

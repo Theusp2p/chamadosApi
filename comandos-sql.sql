@@ -4,7 +4,6 @@ create table department(
 )
 
 
-
 create table tb_user(
     id serial primary key,
     name varchar(50) not null,
@@ -43,6 +42,7 @@ create table support_ticket(
    status varchar(15) not null,
    created_at timestamp not null default current_timestamp,
    updated_at timestamp,
+   start_of_service timestamp,
    attributed_to varchar(30),
    last_modified_by varchar(15),
    id_department int not null references department(id),

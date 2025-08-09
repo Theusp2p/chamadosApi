@@ -3,7 +3,9 @@ package com.chamados.API.controllers.webControllers;
 import com.chamados.API.entities.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginViewController {
@@ -14,13 +16,13 @@ public class LoginViewController {
     }
 
     @GetMapping("/")
-    public String homePage(Authentication authentication) {
+    public String homePage(Authentication authentication, RedirectAttributes redirectAttributes) {
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal();
 
             // Verifica se precisa trocar a senha
             if (user.getIsChangePasswordNextLogin()) {
-                return "redirect:/reset-password";
+                return "redirect:/resetar-senha";
             }
 
             // Verifica se é ADMIN

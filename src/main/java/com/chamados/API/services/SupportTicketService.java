@@ -1,14 +1,22 @@
 package com.chamados.API.services;
 
 import com.chamados.API.entities.SupportTicket;
+import com.chamados.API.entities.TicketAttachment;
+import com.chamados.API.entities.User;
 import com.chamados.API.entities.enums.PriorityRole;
 import com.chamados.API.entities.enums.SupportTicketStatusRole;
+import com.chamados.API.exceptions.SupportTicketNotFoundException;
 import com.chamados.API.repositories.SupportTicketRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,21 +57,6 @@ public class SupportTicketService {
         return repository.save(ticket);
     }
 
-    public SupportTicket update(Long id, SupportTicket ticketDetails) {
-        SupportTicket ticket = findById(id);
-        if (ticket != null) {
-            ticket.setObject(ticketDetails.getObject());
-            ticket.setDescription(ticketDetails.getDescription());
-            ticket.setComment(ticketDetails.getComment());
-            ticket.setPriority(ticketDetails.getPriority());
-            ticket.setStatus(ticketDetails.getStatus());
-            ticket.setLastModifiedBy(ticketDetails.getLastModifiedBy());
-            ticket.setUpdatedAt(LocalDateTime.now());
-            return repository.save(ticket);
-        }
-        return null;
-    }
-
     public void delete(Long id) {
         repository.deleteById(id);
     }
@@ -80,10 +73,6 @@ public class SupportTicketService {
         return repository.countSupportTicketByStatusOpen();
     }
 
-    public Object countResolvedTickets() {
-        return repository.countSupportTicketByStatusClose();
-    }
-
     public Object countInProgressTickets() {
         return repository.countSupportTicketByStatusInProgress();
     }
@@ -96,21 +85,49 @@ public class SupportTicketService {
         return null;
     }
 
-    public List<SupportTicket> filterByStatusOpen() {
-        return repository.findSupportTicketByStatusOpen();
+    public Page<SupportTicket> findOpenTicketsPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return repository.findOpenTicketsPaginated(pageable);
+    }
+
+    public SupportTicket findLatestTicket() {
+        return repository.findTopByOrderByIdDesc();
     }
 
 
     @Transactional
     public void updateTicket(Long id, SupportTicket updatedTicket) {
             var ticket = findById(id);
-            if (ticket != null) {
-                ticket.setPriority(updatedTicket.getPriority());
-                ticket.setStatus(updatedTicket.getStatus());
-                ticket.setAttributedTo(updatedTicket.getAttributedTo());
-                ticket.setComment(updatedTicket.getComment());
-
-                repository.save(ticket);
+        if (ticket != null) {
+            ticket.setObject(ticket.getObject());
+            ticket.setDescription(ticket.getDescription());
+            ticket.setComment(updatedTicket.getComment());
+            ticket.setAttributedTo(updatedTicket.getAttributedTo());
+            ticket.setPriority(updatedTicket.getPriority());
+            ticket.setStatus(updatedTicket.getStatus());
+            if(updatedTicket.getStatus() == SupportTicketStatusRole.EM_ANDAMENTO) {
+                ticket.setStartOfService(LocalDateTime.now());
             }
+            ticket.setLastModifiedBy(updatedTicket.getLastModifiedBy());
+            ticket.setUpdatedAt(LocalDateTime.now());
+            repository.save(ticket);
+        } else{
+            throw new SupportTicketNotFoundException("Ticket not found");
+        }
+    }
+
+    public List<SupportTicket> findCloseTicketsByDate(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return repository.findCloseTicketsByDate(startOfDay, endOfDay);
+    }
+
+    public Object countResolvedTickets(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return repository.countSupportTicketByStatusClose(startOfDay, endOfDay);
+    }
+
+
+    public Page<SupportTicket> getMyTickets(int page, int size, Authentication authentication) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        String username = authentication.getName();
+        return repository.findByCreatedBy(username, pageable);
     }
 }

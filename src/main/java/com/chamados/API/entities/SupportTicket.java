@@ -51,6 +51,8 @@ public class SupportTicket {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "start_of_service")
+    private LocalDateTime startOfService;
 
     @Column(name = "attributed_to")
     private String attributedTo;

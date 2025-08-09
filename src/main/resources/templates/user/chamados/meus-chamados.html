@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - Sistema de Chamados</title>
+    <title>Meus Chamados</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -104,9 +104,6 @@
             margin: 20px auto;
         }
 
-
-
-
         .table th {
             color: #0c0c2c;
             border-bottom: 2px solid #0c0c2c;
@@ -116,7 +113,96 @@
             background-color: rgba(12, 12, 44, 0.05);
         }
 
-        /*Responsividade*/
+        /* Estilos para o modal de detalhes */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .detail-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .detail-body {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .detail-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #0c0c2c;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .no-content {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .detail-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .view-detail-btn {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        .view-detail-btn:hover {
+            color: #0a58ca;
+        }
+
         @media (max-width: 991.98px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -151,7 +237,6 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-dark">
-    <!-- Menu toggle para mobile -->
     <button class="navbar-toggler border-0 bg-transparent" type="button" id="menu-toggle">
         <i class="fas fa-bars text-white fs-4"></i>
     </button>
@@ -172,30 +257,32 @@
 <div class="sidebar" id="sidebar">
     <ul class="nav flex-column pt-3">
         <li class="nav-item">
-            <a class="nav-link active" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
+            <a class="nav-link " th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/user/dashboard}">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'novo-chamado'} ? 'active'" th:href="@{/user/chamados/novo}">
+            <a class="nav-link " th:classappend="${activePage == 'novo-chamado'} ? 'active'" th:href="@{/user/chamados/novo}">
                 <i class="fas fa-plus-circle"></i> Novo Chamado
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:classappend="${activePage == 'meus-chamados'} ? 'active'" th:href="@{/user/chamados/meus-chamados}">
+            <a class="nav-link active" th:classappend="${activePage == 'meus-chamados'} ? 'active'" th:href="@{/user/chamados/meus-chamados}">
                 <i class="fas fa-list"></i> Meus Chamados
             </a>
         </li>
     </ul>
+
     <!-- Rodapé do Sidebar -->
     <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
         <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
     </div>
 </div>
 
+<!-- Conteúdo Principal -->
 <main class="main-content">
     <div class="container-fluid">
-        <h1 class="h2 mb-4">Dashboard</h1>
+        <h1 class="h2 mb-4">Meus Chamados</h1>
 
         <!-- Flash Messages -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -203,33 +290,10 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
 
-        <!-- Cards de Resumo -->
-        <div class="row">
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-2">Chamados Abertos</h6>
-                            <h3 class="mb-0" th:text="${openTicketsCount}">0</h3>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 p-3 rounded">
-                            <i class="fas fa-ticket-alt text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a th:href="@{/user/chamados/novo}" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Novo Chamado
-            </a>
-        </div>
-
         <!-- Lista de Chamados -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Chamados Abertos</h5>
+                <h5 class="mb-0">Histórico</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -239,19 +303,31 @@
                             <th>ID</th>
                             <th>Assunto</th>
                             <th>Departamento</th>
+                            <th>Status</th>
                             <th>Data Abertura</th>
+                            <th>Detalhes</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="ticket : ${tickets}">
+                        <tr th:each="ticket : ${tickets.content}">
                             <td th:text="${ticket.id}"></td>
                             <td th:text="${ticket.object}"></td>
-                            <td th:text="${ticket.department?.name}"></td>
+                            <td th:text="${ticket.department.name}"></td>
+                            <td th:text="${ticket.status}"></td>
                             <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <button class="view-detail-btn"
+                                        th:data-object="${ticket.object}"
+                                        th:data-description="${ticket.description}"
+                                        th:data-comment="${ticket.comment ?: 'Sem comentário'}"
+                                        onclick="showDetails(this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
                         </tr>
-                        <tr th:if="${tickets == null or tickets.empty}">
-                            <td colspan="4" class="text-center text-muted">
-                                Nenhum chamado aberto no momento
+                        <tr th:if="${tickets == null}">
+                            <td colspan="6" class="text-center text-muted">
+                                Nenhum chamado encontrado
                             </td>
                         </tr>
                         </tbody>
@@ -259,22 +335,22 @@
                 </div>
 
                 <!-- Paginação -->
-                <div th:if="${totalPages > 1}" class="d-flex justify-content-end mt-3">
+                <div th:if="${tickets.totalPages > 1}" class="d-flex justify-content-end mt-3">
                     <nav aria-label="Paginação">
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/user/dashboard(page=${currentPage - 1}, size=${size})}">«</a>
+                                   th:href="@{/user/chamados/meus-chamados(page=${currentPage - 1}, size=${size})}">«</a>
                             </li>
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, tickets.totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/user/dashboard(page=${i}, size=${size})}"
+                                   th:href="@{/user/chamados/meus-chamados(page=${i}, size=${size})}"
                                    th:text="${i + 1}">1</a>
                             </li>
-                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <li class="page-item" th:classappend="${currentPage == tickets.totalPages - 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/user/dashboard(page=${currentPage + 1}, size=${size})}">»</a>
+                                   th:href="@{/user/chamados/meus-chamados(page=${currentPage + 1}, size=${size})}">»</a>
                             </li>
                         </ul>
                     </nav>
@@ -284,10 +360,23 @@
     </div>
 </main>
 
+<!-- Modal para exibir os detalhes -->
+<div id="detailModal" class="detail-modal">
+    <div class="detail-card">
+        <div class="detail-header">
+            <h5 class="mb-0">Detalhes do Chamado</h5>
+            <button class="detail-close" onclick="hideDetails()">&times;</button>
+        </div>
+        <div class="detail-body" id="detailContent">
+            <!-- Conteúdo será inserido aqui -->
+        </div>
+    </div>
+</div>
+
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
+    // Menu toggle
     document.addEventListener('DOMContentLoaded', function () {
         const toggleBtn = document.getElementById('menu-toggle');
         const sidebar = document.getElementById('sidebar');
@@ -304,6 +393,52 @@
                 }
             });
         }
+    });
+
+    // Função para mostrar os detalhes do chamado
+    function showDetails(button) {
+        const modal = document.getElementById('detailModal');
+        const content = document.getElementById('detailContent');
+
+        const object = button.getAttribute('data-object');
+        const description = button.getAttribute('data-description');
+        const comment = button.getAttribute('data-comment');
+
+        // Construir o HTML dos detalhes
+        let html = `
+            <div class="detail-section">
+                <div class="detail-label">Assunto</div>
+                <div class="detail-value">${object || '<span class="no-content">Não informado</span>'}</div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-label">Descrição</div>
+                <div class="detail-value">${description || '<span class="no-content">Não informada</span>'}</div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-label">Comentário</div>
+                <div class="detail-value">${comment !== 'Sem comentário' ? comment : '<span class="no-content">Nenhum comentário disponível para este chamado.</span>'}</div>
+            </div>
+        `;
+
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+    }
+
+    // Função para esconder os detalhes
+    function hideDetails() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+        if (event.target === document.getElementById('detailModal')) {
+            hideDetails();
+        }
+    });
+
+    // Impedir fechamento ao clicar dentro do card
+    document.querySelector('.detail-card').addEventListener('click', function(e) {
+        e.stopPropagation();
     });
 </script>
 </body>

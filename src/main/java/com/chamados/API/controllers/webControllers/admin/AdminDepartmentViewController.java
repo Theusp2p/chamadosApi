@@ -58,7 +58,7 @@ public class AdminDepartmentViewController {
     @Transactional
     public String saveEdit(@PathVariable Integer id, @ModelAttribute("department") Department updatedDepartment, RedirectAttributes redirectAttributes) {
         departmentService.updateDepartment(id, updatedDepartment);
-        redirectAttributes.addFlashAttribute("sucess", "Departmento atualizado com sucesso!");
+        redirectAttributes.addFlashAttribute("success", "Departmento atualizado com sucesso!");
         return "redirect:/admin/departamentos";
     }
 

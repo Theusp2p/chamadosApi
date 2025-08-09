@@ -1,36 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard Admin</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    <!-- CSS Customizado -->
     <style>
-        /* Layout principal */
         body {
             font-size: 0.9rem;
             padding-top: 56px;
             background-color: #f8f9fa;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 250px;
             height: calc(100vh - 56px);
             position: fixed;
-            left: 0;
             top: 56px;
-            background: #0c0c2c; /* Changed to company blue */
-            z-index: 100;
+            left: 0;
+            background: #0c0c2c;
+            z-index: 1000;
             overflow-y: auto;
-            transition: all 0.3s;
+            transition: transform 0.3s ease;
         }
 
         .sidebar .nav-link {
@@ -48,7 +44,7 @@
         .sidebar .nav-link.active {
             color: white;
             background-color: rgba(255, 255, 255, 0.1);
-            border-left-color: #a11c1c; /* Changed to company red */
+            border-left-color: #a11c1c;
         }
 
         .sidebar .nav-link i {
@@ -57,14 +53,12 @@
             text-align: center;
         }
 
-        /* Conteúdo principal */
         .main-content {
             margin-left: 250px;
             padding: 20px;
             transition: all 0.3s;
         }
 
-        /* Header */
         .navbar {
             position: fixed;
             top: 0;
@@ -72,262 +66,399 @@
             left: 0;
             z-index: 1030;
             height: 56px;
-            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
-            background-color: #0c0c2c !important; /* Changed to company blue */
+            background-color: #0c0c2c;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .navbar-brand {
+            color: white;
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: white;
         }
 
         .logo {
             max-width: 150px;
-            margin: 0 auto 20px;
             display: block;
-            margin-top: 100px;
-        }
-
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.15rem 0.35rem rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background-color: #a11c1c; /* Changed to company red */
-            border-color: #a11c1c; /* Changed to company red */
-        }
-
-        .btn-primary:hover {
-            background-color: #8c1818; /* Darker shade of company red */
-            border-color: #8c1818; /* Darker shade of company red */
+            margin: 20px auto;
         }
 
         .btn-outline-primary {
-            color: #a11c1c; /* Company blue */
-            border-color: #a11c1c; /* Company blue */
+            color: #a11c1c;
+            border-color: #a11c1c;
         }
 
         .btn-outline-primary:hover {
-            background-color: #a11c1c; /* Company blue */
+            background-color: #a11c1c;
             color: white;
         }
 
-        /* Badges */
-        .badge {
-            font-weight: 500;
-            padding: 0.35em 0.65em;
-        }
-
-        /* Responsividade */
+        /*Responsividade*/
         @media (max-width: 991.98px) {
             .sidebar {
-                left: -250px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
             }
 
-            .sidebar.show {
-                left: 0;
+            .navbar-toggler {
+                display: block;
             }
 
-            .sidebar-collapse {
-                display: block;
+            .user-info span {
+                display: none;
             }
         }
 
         @media (min-width: 992px) {
-            .sidebar-collapse {
+            .navbar-toggler {
                 display: none;
             }
         }
+
+        /* Estilos para as notificações */
+        .toast {
+            max-width: 350px;
+            overflow: hidden;
+            font-size: 0.875rem;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            opacity: 1;
+        }
+
+        .bg-success {
+            background-color: #0c0c2c!important;
+        }
+
+        .bg-danger {
+            background-color: #dc3545!important;
+        }
+
+        .bg-info {
+            background-color: #17a2b8!important;
+        }
+
     </style>
+    <audio id="notificationSound" preload="auto">
+        <source src="/sounds/ToqueNotification2.mp3" type="audio/mpeg">
+    </audio>
 </head>
 <body>
-<!-- Header -->
-<nav class="navbar navbar-expand navbar-dark">
-    <div class="container-fluid">
-        <!-- Logo e nome -->
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-tools me-2"></i>
-            <span class="d-none d-sm-inline">Sistema de Chamados</span>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark">
+    <!-- Menu toggle para mobile -->
+    <button class="navbar-toggler border-0 bg-transparent" type="button" id="menu-toggle">
+        <i class="fas fa-bars text-white fs-4"></i>
+    </button>
+
+    <a class="navbar-brand" href="#">
+        <i class="fas fa-tools me-2"></i> Sistema de Chamados
+    </a>
+
+    <div class="user-info">
+        <span th:text="${#authentication.getName()}">admin</span>
+        <a class="logout-btn" th:href="@{/logout}" title="Sair">
+            <i class="fas fa-sign-out-alt"></i>
         </a>
-
-        <!-- Botão para recolher sidebar (visível apenas em mobile) -->
-        <button class="navbar-toggler sidebar-collapse" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Menu do usuário -->
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-circle me-1"></i>
-                    <span th:text="${#authentication.getName()}">Admin</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                    <li><a class="dropdown-item" href="#">Configurações</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" th:href="@{/logout}">Sair</a></li>
-                </ul>
-            </li>
-        </ul>
     </div>
 </nav>
 
 <!-- Sidebar -->
-<div class="sidebar">
-    <div class="sidebar-menu pt-3">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'chamados'} ? 'active'" th:href="@{/admin/chamados}">
-                    <i class="fas fa-ticket-alt"></i>
-                    Chamados
-                    <span class="badge bg-danger float-end" th:text="${openTicketsCount}">0</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'usuarios'} ? 'active'" th:href="@{/admin/usuarios}">
-                    <i class="fas fa-users"></i>
-                    Usuários
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'departamentos'} ? 'active'" th:href="@{/admin/departamentos}">
-                    <i class="fas fa-users"></i>
-                    Departamentos
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" th:classappend="${activePage == 'relatorios'} ? 'active'" th:href="@{/admin/relatorios}">
-                    <i class="fas fa-chart-bar"></i>
-                    Relatórios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled"  th:classappend="${activePage == 'configuracoes'} ? 'active'" th:href="@{/admin/configuracoes}">
-                    <i class="fas fa-cog"></i>
-                    Configurações
-                </a>
-            </li>
-        </ul>
-    </div>
-
+<div class="sidebar" id="sidebar">
+    <ul class="nav flex-column pt-3">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'chamados'} ? 'active'" th:href="@{/admin/chamados}">
+                <i class="fas fa-ticket-alt"></i> Chamados
+                <span class="badge bg-danger float-end" th:text="${openTicketsCount}">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'usuarios'} ? 'active'" th:href="@{/admin/usuarios}">
+                <i class="fas fa-users"></i> Usuários
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'departamentos'} ? 'active'" th:href="@{/admin/departamentos}">
+                <i class="fas fa-building"></i> Departamentos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'relatorios'} ? 'active'" th:href="@{/admin/relatorios}">
+                <i class="fas fa-chart-bar"></i> Relatórios
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled">
+                <i class="fas fa-cog"></i> Configurações
+            </a>
+        </li>
+    </ul>
     <!-- Rodapé do Sidebar -->
     <div class="sidebar-footer p-3 text-white small position-absolute bottom-0 w-100">
         <img th:src="@{/icons/LogoFinal2.png}" alt="Logo HRA" class="logo">
     </div>
 </div>
 
-<!-- Conteúdo Principal -->
+<!-- Conteúdo principal -->
 <main class="main-content">
     <div class="container-fluid">
         <h1 class="h2 mb-4">Dashboard</h1>
 
-        <!-- Cards de Resumo -->
         <div class="row">
-            <!-- Card de contagem (mantido) -->
             <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card border-start border-primary border-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="text-muted mb-2">Chamados Abertos</h6>
-                                <h3 class="mb-0" th:text="${openTicketsCount}">0</h3>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                <i class="fas fa-ticket-alt text-primary"></i>
-                            </div>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Chamados Abertos</h6>
+                            <h3 class="mb-0" th:text="${openTicketsCount}">0</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-ticket-alt text-primary"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Nova seção para listagem -->
+
+        <!-- Tabela -->
         <div class="card mt-4">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Lista de Chamados Abertos</h5>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Assunto</th>
-                            <th>Solicitante</th>
-                            <th>Departamento</th>
-                            <th>Data Abertura</th>
-                            <th>Ações</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="ticket : ${opensTickets}">
-                            <td th:text="${ticket.id}">123</td>
-                            <td th:text="${ticket.object}">Problema com impressora</td>
-                            <td th:text="${ticket.createdBy}">João Silva</td>
-                            <td th:text="${ticket.department.name}">Hemodinâmica</td>
-                            <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">10/05/2023 14:30</td>
-                            <td>
-                                <a th:href="@{/admin/chamados/{id}/editar(id=${ticket.id})}"
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${opensTickets == null}">
-                            <td colspan="5" class="text-center text-muted">
-                                Nenhum chamado aberto no momento
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Assunto</th>
+                        <th>Solicitante</th>
+                        <th>Departamento</th>
+                        <th>Data Abertura</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="ticket : ${opensTickets}">
+                        <td th:text="${ticket.id}"></td>
+                        <td th:text="${ticket.object}"></td>
+                        <td th:text="${ticket.createdBy}"></td>
+                        <td th:text="${ticket.department.name}"></td>
+                        <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/chamados/{id}/editar(id=${ticket.id})}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${opensTickets.size() == 0}">
+                        <td colspan="6" class="text-center text-muted">Nenhum chamado aberto no momento</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <!-- Seção de Tickets Urgentes -->
+            <!-- Paginação -->
+            <div th:if="${totalPages > 1}" class="d-flex justify-content-end mt-3">
+                <nav aria-label="Paginação">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/dashboard(page=${currentPage - 1}, size=${10})}">«</a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link" th:href="@{/admin/dashboard(page=${i}, size=${10})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/dashboard(page=${currentPage + 1}, size=${10})}">»</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
     </div>
 </main>
 
+<input type="hidden" id="initialTicketId" th:value="${opensTickets != null && !opensTickets.isEmpty() ? opensTickets[0].id : 0}" />
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Toggle do sidebar em mobile
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarCollapse = document.querySelector('.sidebar-collapse');
-        const sidebar = document.querySelector('.sidebar');
 
-        if (sidebarCollapse && sidebar) {
-            sidebarCollapse.addEventListener('click', function() {
+    // Recarrega a página a cada 5 segundos
+    setTimeout(function() {
+        window.location.reload();
+    }, 10000);
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurações iniciais
+        const notificationSound = document.getElementById('notificationSound');
+        const ticketsTableBody = document.querySelector('tbody');
+        const openTicketsCountElement = document.querySelector('[th\\:text="${openTicketsCount}"]');
+
+        // Inicializa variáveis
+        let lastTicketId = parseInt(document.getElementById('initialTicketId').value) || 0;
+        let isFirstCheck = true;
+        let checkInterval = 30000; // 30 segundos
+
+        // Função para tocar o som de notificação
+        function playNotification() {
+            notificationSound.currentTime = 0; // Reinicia o áudio
+            notificationSound.play().catch(e => {
+                console.log("Notificação sonora bloqueada:", e);
+                // Mostra botão para ativar som se bloqueado
+                showEnableSoundButton();
+            });
+        }
+
+        // Notificação visual estilo Toast
+        function showToast(message, type = 'info') {
+            const toastContainer = document.createElement('div');
+            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+            toastContainer.style.zIndex = '1100';
+
+            const toastHtml = `
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header bg-${type} text-white">
+                        <strong class="me-auto">Sistema de Chamados</strong>
+                        <small>Agora</small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            toastContainer.innerHTML = toastHtml;
+            document.body.appendChild(toastContainer);
+        }
+
+        // Botão para ativar som se bloqueado
+        function showEnableSoundButton() {
+            const soundButton = document.createElement('button');
+            soundButton.className = 'btn btn-sm btn-warning position-fixed bottom-0 start-0 m-3';
+            soundButton.innerHTML = '<i class="fas fa-volume-up"></i> Ativar Notificações Sonoras';
+            soundButton.onclick = () => {
+                notificationSound.play().then(() => {
+                    soundButton.remove();
+                    showToast('Notificações sonoras ativadas!', 'success');
+                }).catch(e => {
+                    showToast('Permita sons no navegador primeiro', 'danger');
+                });
+            };
+            document.body.appendChild(soundButton);
+        }
+
+        // Atualiza os contadores
+        async function updateCounters() {
+            try {
+                const response = await fetch('/admin/dashboard/counters');
+                if (!response.ok) throw new Error('Erro na requisição');
+
+                const data = await response.json();
+                openTicketsCountElement.textContent = data.open || 0;
+
+                // Atualize outros contadores aqui se necessário
+            } catch (error) {
+                console.error('Erro ao atualizar contadores:', error);
+            }
+        }
+
+        // Atualiza a tabela de chamados
+        async function updateTicketsTable() {
+            try {
+                const response = await fetch('/admin/chamados/table');
+                if (!response.ok) throw new Error('Erro na requisição');
+
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTableBody = doc.querySelector('tbody');
+
+                if (newTableBody) {
+                    ticketsTableBody.innerHTML = newTableBody.innerHTML;
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar tabela:', error);
+            }
+        }
+
+        // Verifica novos chamados
+        async function checkNewTickets() {
+            try {
+                const response = await fetch('/admin/chamados/latest');
+                if (!response.ok) throw new Error('Erro na requisição');
+
+                const data = await response.json();
+
+                if (data.id > lastTicketId && !isFirstCheck) {
+                    playNotification();
+                    showToast(`Novo chamado #${data.id} recebido!`, 'success');
+                    await updateCounters();
+                    await updateTicketsTable();
+                }
+
+                lastTicketId = data.id;
+                isFirstCheck = false;
+            } catch (error) {
+                console.error('Erro ao verificar novos chamados:', error);
+                // Tenta novamente mais rápido em caso de erro
+                setTimeout(checkNewTickets, 5000);
+            }
+        }
+
+        // Menu toggle para mobile
+        const toggleBtn = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('show');
             });
         }
 
-        // Fechar sidebar ao clicar no conteúdo principal (em mobile)
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.addEventListener('click', function() {
-                if (window.innerWidth < 992) {
-                    sidebar.classList.remove('show');
-                }
-            });
-        }
+        // Inicia a verificação periódica
+        checkNewTickets(); // Verificação imediata
+        setInterval(checkNewTickets, checkInterval); // Verificação periódica
+
+        // Verificação quando a janela ganha foco
+        window.addEventListener('focus', checkNewTickets);
     });
 </script>
 </body>

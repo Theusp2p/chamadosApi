@@ -4,9 +4,12 @@ package com.chamados.API.services;
 import com.chamados.API.entities.User;
 import com.chamados.API.exceptions.UsernameAlreadyExistsException;
 import com.chamados.API.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,8 @@ public class UserService {
         if(userRepository.existsByUsername(user.getUsername())){
             throw new UsernameAlreadyExistsException(STR."O usuário \{user.getUsername()}já está em uso");
         }
+
+        user.setCreatedAt(LocalDateTime.now());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -50,16 +55,45 @@ public class UserService {
     public void updateUser(Long id, User updatedUser) {
         Optional<User> userFound = userRepository.findById(id);
         if(userFound.isPresent()){
-            updatedUser.setName(updatedUser.getName());
-            updatedUser.setUsername(updatedUser.getUsername());
-            updatedUser.setPassword(updatedUser.getPassword());
-            updatedUser.setDepartment(updatedUser.getDepartment());
-            updatedUser.setIsActive(updatedUser.getIsActive());
-            updatedUser.setRole(updatedUser.getRole());
-            updatedUser.setIsChangePasswordNextLogin(updatedUser.getIsChangePasswordNextLogin());
-            updatedUser.setCreatedBy(userFound.get().getCreatedBy());
-            updatedUser.setCreatedAt(userFound.get().getCreatedAt());
-            userRepository.save(updatedUser);
+            User existingUser = userFound.get();
+
+            // Atualiza apenas os campos permitidos
+            existingUser.setName(updatedUser.getName());
+            existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setDepartment(updatedUser.getDepartment());
+            existingUser.setIsActive(updatedUser.getIsActive());
+            existingUser.setRole(updatedUser.getRole());
+            existingUser.setIsChangePasswordNextLogin(updatedUser.getIsChangePasswordNextLogin());
+
+            // Mantém a senha existente se a nova for null
+            if(updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+
+            // Mantém campos de auditoria originais
+            existingUser.setLastModifiedBy(updatedUser.getLastModifiedBy());
+            existingUser.setLastModifiedAt(LocalDateTime.now());
+
+            userRepository.save(existingUser);
         }
     }
+
+    @Transactional
+    public void resetPassword(Long userId, String currentPassword, String newPassword, String confirmPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Senha atual incorreta.");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("A nova senha e a confirmação não coincidem.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setIsChangePasswordNextLogin(false);
+        userRepository.save(user);
+    }
+
 }
